@@ -23,6 +23,31 @@ npm install elf-hyperbee-persist
 
 ---
 
+## Compatibility
+
+**`elf-hyperbee-persist`** is designed to work in both **Node.js** and **Bare** environments.
+
+- **Node.js Compatibility**:
+    - Fully supports **ES modules (`import`)**.
+    - Works with **Hyperbee**, **RxJS**, and **Elf** for efficient state management.
+
+- **Bare Environment Compatibility**:
+    - Can run in environments without traditional Node.js dependencies.
+    - Uses `bare:test` to ensure functionality in **Bare-based runtimes**.
+
+#### Running Tests for Both Environments
+To ensure compatibility, both standard and Bare tests are included:
+
+```sh
+# Standard Node.js test
+npm test
+
+# Test in Bare runtime
+npm run bare:test
+```
+
+---
+
 ## API
 
 ### `loadStateFromHyperbee$`
