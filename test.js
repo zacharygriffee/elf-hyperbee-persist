@@ -1,11 +1,11 @@
-import {test} from "brittle";
+import {test, solo} from "brittle";
 import {createStore, setProp, withProps} from "@ngneat/elf";
 import Hyperbee from "hyperbee";
 import Hypercore from "hypercore";
 import RAM from "random-access-memory";
 import {
     loadStateFromHyperbee$,
-    loadStateThenPersistStateFromHyperbee$,
+    loadStateThenPersistStateFromHyperbee$, persistStateIntoHyperbee$,
     stringStringIndexEncoding
 } from "./lib/index.js";
 import {addEntities, withEntities} from "@ngneat/elf-entities";
@@ -132,4 +132,19 @@ test("Test persist state no prefix", async t => {
         await db.close();
         await db.core.purge();
     });
+});
+
+solo("Same values won't up seq", async t => {
+    const testStore = createStore({name: "TEST_DEBUG_3"}, withProps());
+    const db = new Hyperbee(new Hypercore(RAM), {keyEncoding: "utf8", valueEncoding: "json"});
+    from(db.createHistoryStream({live: true})).subscribe(console.log);
+    persistStateIntoHyperbee$(db, testStore, {prefix: null, debounce: 1}).subscribe();
+    testStore.update(state => ({hello: "world"}));
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const {seq: a} = await db.get("hello");
+    t.is(a, 1);
+    testStore.update(state => ({hello: "world"}));
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const {seq: b} = await db.get("hello");
+    t.is(b, 1);
 });

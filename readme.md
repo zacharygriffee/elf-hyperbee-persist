@@ -76,8 +76,6 @@ loadStateFromHyperbee$(hyperbeeInstance, myElfStore, { prefix: "gameState" }).su
 loadStateFromHyperbee$(hyperbeeInstance, myElfStore, { prefix: null }).subscribe();
 ```
 
----
-
 ### `persistStateIntoHyperbee$`
 
 ```js
@@ -87,11 +85,17 @@ import { persistStateIntoHyperbee$ } from "elf-hyperbee-persist";
 Watches for state changes in the Elf store and persists them into Hyperbee.
 
 #### Parameters:
-- `hyperbee`: The Hyperbee instance to persist the state into.
-- `elfStore`: The RxJS Elf store tracking state changes.
-- `options.prefix` _(default: `"state"`)_: If provided, persists state using `[prefix, key]` format.
+- **`hyperbee`**: The Hyperbee instance to persist the state into.
+- **`elfStore`**: The RxJS Elf store tracking state changes.
+- **`options.prefix`** _(default: `"state"`)_: If provided, persists state using `[prefix, key]` format.
     - If `prefix` is `null`, stores keys directly without structuring them as arrays.
-- `options.debounce` _(default: `1000`)_: Debounce time in milliseconds before persisting updates.
+- **`options.debounce`** _(default: `1000`)_: Debounce time in milliseconds before persisting updates.
+- **`options.cas`** _(default: a deep equality check)_: A **compare-and-swap (CAS) function** that determines whether an entry should be updated in Hyperbee.
+    - Accepts two parameters: `prev` (previous entry) and `curr` (new entry).
+    - Should return `true` if the entry **should be updated**.
+- **`options.distinct`** _(default: a deep equality check)_: A function that determines whether state updates are considered distinct.
+    - Used in `distinctUntilChanged` to filter redundant updates.
+    - Accepts two consecutive state values and should return `true` if they **are the same** (i.e., no need to update).
 
 #### Returns:
 An RxJS observable that processes state updates and saves them to Hyperbee.
@@ -103,6 +107,14 @@ persistStateIntoHyperbee$(hyperbeeInstance, myElfStore, { prefix: "gameState" })
 
 // Using non-prefixed keys
 persistStateIntoHyperbee$(hyperbeeInstance, myElfStore, { prefix: null }).subscribe();
+
+// Using a custom CAS function
+const customCas = (prev, curr) => prev.version !== curr.version;
+persistStateIntoHyperbee$(hyperbeeInstance, myElfStore, { cas: customCas }).subscribe();
+
+// Using a custom distinct function
+const customDistinct = ([prev, curr]) => prev.timestamp === curr.timestamp;
+persistStateIntoHyperbee$(hyperbeeInstance, myElfStore, { distinct: customDistinct }).subscribe();
 ```
 
 ---
