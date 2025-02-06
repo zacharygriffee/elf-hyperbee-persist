@@ -1,0 +1,24 @@
+{
+  "name": "elf-hyperbee-persist",
+  "version": "1.0.0",
+  "description": "RxJS Elf state persistence and synchronization with Hyperbee",
+  "main": "index.js",
+  "scripts": {
+    "test": "brittle ./test.js",
+    "bare:test": "bare ./test.js"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@ngneat/elf": "^2.5.1",
+    "hyperbee": "^2.21.2"
+  },
+  "dependencies": {
+    "index-encoder": "^3.3.2",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "brittle": "^3.10.0",
+    "hypercore": "^10.38.2",
+    "random-access-memory": "^6.2.1"
+  }
+}
