@@ -134,7 +134,7 @@ test("Test persist state no prefix", async t => {
     });
 });
 
-solo("Same values won't up seq", async t => {
+test("Same values won't up seq", async t => {
     const testStore = createStore({name: "TEST_DEBUG_3"}, withProps());
     const db = new Hyperbee(new Hypercore(RAM), {keyEncoding: "utf8", valueEncoding: "json"});
     from(db.createHistoryStream({live: true})).subscribe(console.log);
@@ -147,4 +147,9 @@ solo("Same values won't up seq", async t => {
     await new Promise(resolve => setTimeout(resolve, 100));
     const {seq: b} = await db.get("hello");
     t.is(b, 1);
+    t.teardown(async () => {
+        sub.unsubscribe();
+        await db.close();
+        await db.core.purge();
+    });
 });

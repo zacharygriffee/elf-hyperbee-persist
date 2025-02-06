@@ -1,6 +1,6 @@
 {
   "name": "elf-hyperbee-persist",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "RxJS Elf state persistence and synchronization with Hyperbee",
   "main": "index.js",
   "scripts": {

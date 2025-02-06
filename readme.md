@@ -132,6 +132,12 @@ Combines `loadStateFromHyperbee$` and `persistStateIntoHyperbee$` in sequence.
 - `elfStore`: The Elf store to synchronize.
 - `options.prefix` _(default: `"state"`)_: If provided, applies a prefix to stored and retrieved keys.
 - `options.debounce` _(default: `1000`)_: Debounce time before persisting changes.
+- **`options.cas`** _(default: a deep equality check)_: A **compare-and-swap (CAS) function** that determines whether an entry should be updated in Hyperbee.
+    - Accepts two parameters: `prev` (previous entry) and `curr` (new entry).
+    - Should return `true` if the entry **should be updated**.
+- **`options.distinct`** _(default: a deep equality check)_: A function that determines whether state updates are considered distinct.
+    - Used in `distinctUntilChanged` to filter redundant updates.
+    - Accepts two consecutive state values and should return `true` if they **are the same** (i.e., no need to update).
 
 #### Returns:
 An RxJS observable that first loads the state and then starts persisting subsequent changes.
