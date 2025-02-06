@@ -138,7 +138,7 @@ test("Same values won't up seq", async t => {
     const testStore = createStore({name: "TEST_DEBUG_3"}, withProps());
     const db = new Hyperbee(new Hypercore(RAM), {keyEncoding: "utf8", valueEncoding: "json"});
     from(db.createHistoryStream({live: true})).subscribe(console.log);
-    persistStateIntoHyperbee$(db, testStore, {prefix: null, debounce: 1}).subscribe();
+    const sub = persistStateIntoHyperbee$(db, testStore, {prefix: null, debounce: 1}).subscribe();
     testStore.update(state => ({hello: "world"}));
     await new Promise(resolve => setTimeout(resolve, 100));
     const {seq: a} = await db.get("hello");
@@ -148,8 +148,7 @@ test("Same values won't up seq", async t => {
     const {seq: b} = await db.get("hello");
     t.is(b, 1);
     t.teardown(async () => {
+        await new Promise(resolve => setTimeout(resolve, 100));
         sub.unsubscribe();
-        await db.close();
-        await db.core.purge();
     });
 });
